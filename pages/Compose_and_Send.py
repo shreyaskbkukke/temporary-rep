@@ -4,7 +4,7 @@ from src.smtp_client import SMTPClient
 from src.utils import load_smtp_config
 
 st.set_page_config(page_title="Step 3: Send Emails", layout="wide")
-st.title("📨 Step 3: Compose & Send")
+st.title("Step 3: Compose & Send")
 
 # ---------------------- Validate State ----------------------
 if "recipients" not in st.session_state or not st.session_state.recipients:
@@ -23,7 +23,7 @@ recipients = st.session_state.recipients
 i = st.session_state.get("current_index", 0)
 
 if i >= len(recipients):
-    st.success("✅ All emails processed.")
+    st.success("All emails processed.")
     st.stop()
 
 # ---------------------- Basic Details ----------------------
@@ -31,27 +31,20 @@ recipient_email = recipients[i]
 subject = st.session_state.subject
 html_content = st.session_state.html_content
 
-# Default values
+# ---------------------- Default Values ----------------------
 default_name = recipient_email.split("@")[0].capitalize()
 default_from_date = st.session_state.get("default_from", date(2024, 6, 1))
 default_to_date = st.session_state.get("default_to", date(2024, 6, 30))
 
-# ---------------------- Edit Fields ----------------------
-st.markdown("### 🛠️ Optional: Edit Email Content")
-enable_edit = st.checkbox("Enable per-email content editing", value=False)
+# ---------------------- Editable Fields ----------------------
+st.markdown("### ✏️ Personalize Email Content")
+name = st.text_input("Name", value=default_name)
+from_date = st.date_input("From Date", value=default_from_date)
+to_date = st.date_input("To Date", value=default_to_date)
 
-if enable_edit:
-    name = st.text_input("Name", value=default_name)
-    from_date = st.date_input("From Date", value=default_from_date)
-    to_date = st.date_input("To Date", value=default_to_date)
-
-    # Save defaults for next round
-    st.session_state.default_from = from_date
-    st.session_state.default_to = to_date
-else:
-    name = default_name
-    from_date = default_from_date
-    to_date = default_to_date
+# Save for reuse in next loop
+st.session_state.default_from = from_date
+st.session_state.default_to = to_date
 
 # ---------------------- Render Personalized Email ----------------------
 personalized_html = (
@@ -77,7 +70,7 @@ if col1.button("✅ Send Email"):
             cfg["sender_password"]
         )
         client.send_html_email([recipient_email], subject, personalized_html)
-        st.success(f"✅ Email sent to {recipient_email}")
+        st.success(f"Email sent to {recipient_email}")
     except Exception as e:
         st.error(f"❌ Failed to send: {e}")
     st.session_state.current_index += 1
