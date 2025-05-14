@@ -16,4 +16,6 @@ def load_smtp_config():
         "smtp_port": int(os.getenv("SMTP_PORT")),
         "sender_email": os.getenv("SENDER_EMAIL"),
         "sender_password": os.getenv("SENDER_PASSWORD"),
+        
+        "email_subject": os.getenv("SENDER_PASSWORD"),
     }
